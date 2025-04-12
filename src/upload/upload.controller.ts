@@ -1,35 +1,34 @@
 import {
   Controller,
   Post,
-  UploadedFile,
-  UseGuards,
+  UploadedFiles,
   UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as multer from 'multer';
-import { UploadService } from './upload.service';
-import { JWTAuthGuard } from 'src/auth/jwt-auth.guard';
+} from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import * as multer from "multer";
+import { UploadService } from "./upload.service";
 
-@Controller('upload')
+@Controller("upload")
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
-  @Post('file')
+  @Post("files")
   @UseInterceptors(
-    FileInterceptor('file', {
+    FilesInterceptor("files", 10, {
       storage: multer.memoryStorage(),
-    }),
+    })
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadMultipleFiles(@UploadedFiles() files: Express.Multer.File[]) {
     try {
-      const invoiceData = await this.uploadService.parseFile(file);
+      const result = await this.uploadService.parseFiles(files);
+
       return {
-        message: 'Success',
-        data: { invoiceData },
+        message: "Success",
+        data: result,
       };
     } catch (error) {
       return {
-        message: 'Error',
+        message: "Error",
         error: error.message,
       };
     }

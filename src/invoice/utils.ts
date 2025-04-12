@@ -1,7 +1,7 @@
-import { Resvg } from '@resvg/resvg-js';
+import { Resvg } from "@resvg/resvg-js";
 
 export const removeStrokeFromSVG = (svg: string): string => {
-  return svg.replace(/\\/g, '').replace(/\s*stroke="[^"]*"/g, '');
+  return svg.replace(/\\/g, "").replace(/\s*stroke="[^"]*"/g, "");
 };
 
 export const svgToBase64 = async (base64Svg: string): Promise<string> => {
