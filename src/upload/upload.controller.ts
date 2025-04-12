@@ -21,11 +21,17 @@ export class UploadController {
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const invoiceData = await this.uploadService.parseFile(file);
-    return {
-      message: 'File uploaded successfully',
-      filename: file.filename,
-      data: { invoiceData },
-    };
+    try {
+      const invoiceData = await this.uploadService.parseFile(file);
+      return {
+        message: 'Success',
+        data: { invoiceData },
+      };
+    } catch (error) {
+      return {
+        message: 'Error',
+        error: error.message,
+      };
+    }
   }
 }

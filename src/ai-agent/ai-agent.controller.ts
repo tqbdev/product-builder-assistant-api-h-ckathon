@@ -7,6 +7,6 @@ export class AiAgentController {
 
   @Get('ask')
   async ask(@Query('question') question: string): Promise<string> {
-    return '';
+    return '123123';
   }
 }

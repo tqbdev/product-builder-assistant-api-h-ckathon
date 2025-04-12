@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JWTAuthGuard } from './auth/jwt-auth.guard';
 import { SupabaseModule } from './supabase/supabase.module';
 import { ConfigModule } from '@nestjs/config';
+import { InvoiceModule } from './invoice/invoice.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     UploadModule,
     AuthModule,
     SupabaseModule,
+    InvoiceModule,
   ],
   providers: [
     {
