@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { AiAgentService } from 'src/ai-agent/ai-agent.service';
-import { SupabaseService } from 'src/supabase/supabase.service';
 @Injectable()
 export class UploadService {
   constructor(
@@ -11,5 +10,12 @@ export class UploadService {
     const invoiceData = await this.aiAgentService.processFile(file);
 
     return invoiceData;
+  }
+
+  async parseToNotion(file: Express.Multer.File) {
+
+    const blocks = await this.aiAgentService.parseToNotionBlocks(file);
+
+    return blocks;
   }
 }
