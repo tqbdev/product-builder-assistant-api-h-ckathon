@@ -5,6 +5,7 @@ import { AiAgentService } from "src/ai-agent/ai-agent.service";
 export class UploadService {
   constructor(private readonly aiAgentService: AiAgentService) {}
   async parseFiles(files: Express.Multer.File[]) {
-    return {};
+    const result = await this.aiAgentService.processFileExcel(files[0]);
+    return result;
   }
 }

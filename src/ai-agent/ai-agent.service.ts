@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, MessageContent } from "@langchain/core/messages";
-import * as sharp from "sharp";
 import * as pdf from "pdf-parse";
 import { v7 } from "uuid";
 import * as ExcelToJson from "convert-excel-to-json";
@@ -68,20 +67,10 @@ export class AiAgentService {
   }
 
   async processFileExcel(file: Express.Multer.File): Promise<any> {
-    const content = await this.extractTextFromPdf(file);
-    const response = await this.askAiAgentGetLogic(content);
+    const content = await this.convertExcelToJson(file);
+    const response = await this.askAiAgentGetLogic(JSON.stringify(content));
     const jsonObject = this.parseGeminiJSON(response);
     return jsonObject;
-  }
-
-  async svgToBase64(base64Svg: string): Promise<string> {
-    const svgBuffer = Buffer.from(base64Svg.split(",")[1], "base64");
-    const pngBuffer = await sharp(svgBuffer, { density: 6000 })
-      .resize({ width: 2000 })
-      .png()
-      .toBuffer();
-    const base64Data = pngBuffer.toString("base64");
-    return `data:image/png;base64,${base64Data}`;
   }
 
   async askAiAgentGetLogic(fileContent: string): Promise<any> {
@@ -176,27 +165,6 @@ export class AiAgentService {
     });
 
     const response = await this.model.invoke([new HumanMessage({ content })]);
-    return response.content;
-  }
-
-  async askAiAgentWithImages(base64Image: string): Promise<any> {
-    const imageBuffer = await this.svgToBase64(base64Image);
-    const response = await this.model.invoke([
-      new HumanMessage({
-        content: [
-          {
-            type: "text",
-            text: "Extract the text from this captcha image and return only the text without any additional explanation.",
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: imageBuffer,
-            },
-          },
-        ],
-      }),
-    ]);
     return response.content;
   }
 
