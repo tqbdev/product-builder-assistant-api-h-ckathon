@@ -1,11 +1,11 @@
 {
-  "configurations": [
-    {
-      "type": "node-terminal",
-      "name": "Debug application",
-      "request": "launch",
-      "command": "pnpm run start:debug",
-      "cwd": "${workspaceFolder}/"
-    }
-  ]
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "name": "Run Script: start:debug",
+            "request": "launch",
+            "command": "pnpm run start:debug",
+            "cwd": "${workspaceFolder}/"
+        }
+    ]
 }

@@ -2,11 +2,13 @@ import {
   Controller,
   Post,
   UploadedFiles,
+  UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import * as multer from "multer";
-import { UploadService } from "./upload.service";
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as multer from 'multer';
+import { UploadService } from './upload.service';
 
 @Controller("upload")
 export class UploadController {
@@ -29,6 +31,27 @@ export class UploadController {
     } catch (error) {
       return {
         message: "Error",
+        error: error.message,
+      };
+    }
+  }
+
+  @Post('parseToNotionBlocks')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: multer.memoryStorage(),
+    }),
+  )
+  async parseToNotionBlocks(@UploadedFile() file: Express.Multer.File) {
+    try {
+      const blocks = await this.uploadService.parseToNotion(file);
+      return {
+        message: 'Success',
+        data: { blocks },
+      };
+    } catch (error) {
+      return {
+        message: 'Error',
         error: error.message,
       };
     }

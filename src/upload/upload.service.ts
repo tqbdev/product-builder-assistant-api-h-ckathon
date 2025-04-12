@@ -8,4 +8,11 @@ export class UploadService {
     const result = await this.aiAgentService.processFileExcel(files[0]);
     return result;
   }
+
+  async parseToNotion(file: Express.Multer.File) {
+
+    const blocks = await this.aiAgentService.parseToNotionBlocks(file);
+
+    return blocks;
+  }
 }
