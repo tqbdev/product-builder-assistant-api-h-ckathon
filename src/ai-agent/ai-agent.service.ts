@@ -3,8 +3,9 @@ import { ConfigService } from "@nestjs/config";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, MessageContent } from "@langchain/core/messages";
 import * as ExcelToJson from "convert-excel-to-json";
-import * as pdf from 'pdf-parse';
-import { v7 } from 'uuid';
+import * as pdf from "pdf-parse";
+import { v7 } from "uuid";
+
 export interface InvoiceData {
   id?: string;
   taxCode: string;
@@ -29,6 +30,20 @@ export class AiAgentService {
       maxOutputTokens: 8192,
       streaming: true,
     });
+  }
+
+  async askQuesttion(question: string): Promise<string> {
+    const messages: MessageContent = [
+      {
+        type: "text",
+        text: question,
+      },
+    ];
+    const response = await this.model.invoke([
+      new HumanMessage({ content: messages }),
+    ]);
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    return response.content.toString();
   }
 
   async pdfToBase64(file: Express.Multer.File): Promise<any> {
@@ -74,14 +89,16 @@ export class AiAgentService {
   }
 
   async processFileExcel(file: Express.Multer.File | undefined): Promise<any> {
-    if(!file) return null;
+    if (!file) return null;
     const content = await this.convertExcelToJson(file);
     const response = await this.askAiAgentGetLogic(JSON.stringify(content));
     const jsonObject = this.parseGeminiJSON(response);
     return jsonObject;
   }
-  async processFilePDF(file: Express.Multer.File|undefined): Promise<InvoiceData[]> {
-    if(!file) return [];
+  async processFilePDF(
+    file: Express.Multer.File | undefined
+  ): Promise<InvoiceData[]> {
+    if (!file) return [];
     const pdfBase64 = await this.pdfToBase64(file);
     return await this.askAiAgentToParseNotionBlocks(pdfBase64);
   }
@@ -214,7 +231,7 @@ export class AiAgentService {
       },
     ];
 
-    if (fileContent.startsWith('data:')) {
+    if (fileContent.startsWith("data:")) {
       content.push({
         type: "image_url",
         image_url: {
@@ -235,7 +252,7 @@ export class AiAgentService {
   async askAiAgentToParseNotionBlocks(pdfBase64: string): Promise<any> {
     const [pageContent, benefits] = await Promise.all([
       this.askAiAgentToParsePageContent(pdfBase64),
-      this.askAiAgentToParseTableContent(pdfBase64)
+      this.askAiAgentToParseTableContent(pdfBase64),
     ]);
     return [...pageContent, benefits];
   }
@@ -243,7 +260,7 @@ export class AiAgentService {
   async askAiAgentToParsePageContent(pdfBase64: string): Promise<any> {
     const content: MessageContent = [
       {
-        type: 'text',
+        type: "text",
         text: `
         You are given a PDF file. Your goal is to parse its content and convert it into a structured list of JSON objects, each representing a "block" of content. This output will be used to render the content to a UI.
         Please exclude any table data.
@@ -257,12 +274,12 @@ export class AiAgentService {
         config: A configuration object for the style and presentation of the block, which should include:
           bold: Whether the text is bold (true/false).
           color: The color of the text (e.g., #000000 for black).
-        `
+        `,
       },
     ];
     if (pdfBase64.length == 0) return [];
     content.push({
-      type: 'image_url',
+      type: "image_url",
       image_url: {
         url: pdfBase64,
       },
@@ -271,7 +288,7 @@ export class AiAgentService {
 
     const stream = await this.model.stream([new HumanMessage({ content })]);
     for await (const chunk of stream) {
-      fullResponse += chunk.content;         // Collect the output
+      fullResponse += chunk.content; // Collect the output
     }
 
     return this.parseGeminiJSON(fullResponse);
@@ -280,7 +297,7 @@ export class AiAgentService {
   async askAiAgentToParseTableContent(pdfBase64: string): Promise<any> {
     const content: MessageContent = [
       {
-        type: 'text',
+        type: "text",
         text: `
           Parse this PDF into a structured JSON object for a React component.
 
@@ -318,12 +335,12 @@ export class AiAgentService {
           Ignore remarks, footnotes, and page numbers.
 
           Output only the JSON array, no explanations or extra text.
-        `
+        `,
       },
     ];
     if (pdfBase64.length == 0) return [];
     content.push({
-      type: 'image_url',
+      type: "image_url",
       image_url: {
         url: pdfBase64,
       },
@@ -332,10 +349,10 @@ export class AiAgentService {
 
     const stream = await this.model.stream([new HumanMessage({ content })]);
     for await (const chunk of stream) {
-      fullResponse += chunk.content;         // Collect the output
+      fullResponse += chunk.content; // Collect the output
     }
 
-    return {type:"benefits", data:this.parseGeminiJSON(fullResponse)};
+    return { type: "benefits", data: this.parseGeminiJSON(fullResponse) };
   }
 
   async invoke(messages: HumanMessage[]): Promise<any> {

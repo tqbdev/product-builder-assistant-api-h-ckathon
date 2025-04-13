@@ -1,12 +1,12 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { AiAgentService } from "./ai-agent.service";
 
 @Controller("ai-agent")
 export class AiAgentController {
   constructor(private readonly aiAgentService: AiAgentService) {}
 
-  @Get("ask")
-  async ask(@Query("question") question: string): Promise<string> {
-    return "123123";
+  @Post("ask")
+  async ask(@Body("message") question: string): Promise<string> {
+    return this.aiAgentService.askQuesttion(question);
   }
 }
