@@ -263,6 +263,7 @@ export class AiAgentService {
         type: "text",
         text: `
         You are given a PDF file. Your goal is to parse its content and convert it into a structured list of JSON objects, each representing a "block" of content. This output will be used to render the content to a UI.
+        You must give me the colorful and creative interface blocks style.
         Please exclude any table data.
         Each block should contain the following fields:
         type: The type of content in the block. This could be one of the following:
@@ -271,10 +272,116 @@ export class AiAgentService {
         bulleted list item: A single item in a bulleted list.
         heading: A heading (e.g., H1, H2, etc.).
         data: The actual content of the block, e.g., the text, list item, or table content.
-        config: A configuration object for the style and presentation of the block, which should include:
-          bold: Whether the text is bold (true/false).
-          color: The color of the text (e.g., #000000 for black).
-        `,
+        config:
+                {
+               icon:(string) use react-lucide icons, ex: ChevronDown, ChevronUp,  DollarSign,  Video,  Shield,  Umbrella,  Users,  Dumbbell,  Car,  Anchor,  Heart,  Smartphone,...
+               ,
+                className:(string) styled using Tailwind CSS, must add colors, alignments, fonts, fonts-size, etc.}
+                use this taildwind theme config :
+                 {
+                          container: {
+                            center: true,
+                            padding: '2rem',
+                            screens: {
+                              '2xl': '1400px'
+                            }
+                          },
+                          extend: {
+                            colors: {
+                              border: 'hsl(var(--border))',
+                              input: 'hsl(var(--input))',
+                              ring: 'hsl(var(--ring))',
+                              background: 'hsl(var(--background))',
+                              foreground: 'hsl(var(--foreground))',
+                              primary: {
+                                DEFAULT: 'hsl(var(--primary))',
+                                foreground: 'hsl(var(--primary-foreground))'
+                              },
+                              secondary: {
+                                DEFAULT: 'hsl(var(--secondary))',
+                                foreground: 'hsl(var(--secondary-foreground))'
+                              },
+                              destructive: {
+                                DEFAULT: 'hsl(var(--destructive))',
+                                foreground: 'hsl(var(--destructive-foreground))'
+                              },
+                              muted: {
+                                DEFAULT: 'hsl(var(--muted))',
+                                foreground: 'hsl(var(--muted-foreground))'
+                              },
+                              accent: {
+                                DEFAULT: 'hsl(var(--accent))',
+                                foreground: 'hsl(var(--accent-foreground))'
+                              },
+                              popover: {
+                                DEFAULT: 'hsl(var(--popover))',
+                                foreground: 'hsl(var(--popover-foreground))'
+                              },
+                              card: {
+                                DEFAULT: 'hsl(var(--card))',
+                                foreground: 'hsl(var(--card-foreground))'
+                              },
+                              sidebar: {
+                                DEFAULT: 'hsl(var(--sidebar-background))',
+                                foreground: 'hsl(var(--sidebar-foreground))',
+                                primary: 'hsl(var(--sidebar-primary))',
+                                'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+                                accent: 'hsl(var(--sidebar-accent))',
+                                'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+                                border: 'hsl(var(--sidebar-border))',
+                                ring: 'hsl(var(--sidebar-ring))'
+                              },
+                              app: {
+                                'blue': '#0EA5E9',
+                                'blue-light': '#38BDF8',
+                                'gray-light': '#F1F5F9',
+                                'gray': '#64748B',
+                                'gray-dark': '#334155'
+                              }
+                            },
+                            borderRadius: {
+                              lg: 'var(--radius)',
+                              md: 'calc(var(--radius) - 2px)',
+                              sm: 'calc(var(--radius) - 4px)'
+                            },
+                            keyframes: {
+                              'accordion-down': {
+                                from: {
+                                  height: '0'
+                                },
+                                to: {
+                                  height: 'var(--radix-accordion-content-height)'
+                                }
+                              },
+                              'accordion-up': {
+                                from: {
+                                  height: 'var(--radix-accordion-content-height)'
+                                },
+                                to: {
+                                  height: '0'
+                                }
+                              },
+                              'fade-in': {
+                                from: { opacity: '0' },
+                                to: { opacity: '1' }
+                              },
+                              'slide-up': {
+                                from: { transform: 'translateY(10px)', opacity: '0' },
+                                to: { transform: 'translateY(0)', opacity: '1' }
+                              }
+                            },
+                            animation: {
+                              'accordion-down': 'accordion-down 0.2s ease-out',
+                              'accordion-up': 'accordion-up 0.2s ease-out',
+                              'fade-in': 'fade-in 0.3s ease-out',
+                              'slide-up': 'slide-up 0.3s ease-out'
+                            }
+                          }
+                        }
+                }
+         
+        Only return the JSON object, no code blocks, backticks, or extra formatting.
+        `
       },
     ];
     if (pdfBase64.length == 0) return [];
