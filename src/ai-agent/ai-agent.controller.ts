@@ -6,7 +6,7 @@ export class AiAgentController {
   constructor(private readonly aiAgentService: AiAgentService) {}
 
   @Post("ask")
-  async ask(@Body("message") question: string): Promise<string> {
-    return this.aiAgentService.askQuesttion(question);
+  async ask(@Body("message") question: string, @Body("data") data: any): Promise<any> {
+    return this.aiAgentService.askQuesttion(question,data);
   }
 }

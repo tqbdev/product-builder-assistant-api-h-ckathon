@@ -32,18 +32,33 @@ export class AiAgentService {
     });
   }
 
-  async askQuesttion(question: string): Promise<string> {
+  async askQuesttion(question: string,data:any): Promise<any> {
     const messages: MessageContent = [
+      {
+        type: "text",
+        text: `You are a helpful assistant that can modify the given data of list of blocks,
+         then return with exact JSON format was given.Only return the changed blocks, 
+         The response format is JSON with fields below: {
+        message: "The message of model, describe the result",
+        data: The modified data with the same fields as the input
+        }
+         The user input is below:`
+      },
       {
         type: "text",
         text: question,
       },
+      {
+        type: "text",
+        text: `The data is below: ${JSON.stringify(data)}`,
+      },
+     
     ];
     const response = await this.model.invoke([
       new HumanMessage({ content: messages }),
     ]);
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
-    return response.content.toString();
+    return this.parseGeminiJSON(response.content.toString());
   }
 
   async pdfToBase64(file: Express.Multer.File): Promise<any> {
@@ -254,7 +269,11 @@ export class AiAgentService {
       this.askAiAgentToParsePageContent(pdfBase64),
       this.askAiAgentToParseTableContent(pdfBase64),
     ]);
-    return [...pageContent, benefits];
+    const response = [...pageContent, benefits];
+    response.forEach((block: any) => {
+      block.id = v7();
+    });
+    return response;
   }
 
   async askAiAgentToParsePageContent(pdfBase64: string): Promise<any> {
