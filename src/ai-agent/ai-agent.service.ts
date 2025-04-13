@@ -40,7 +40,7 @@ export class AiAgentService {
          then return with exact JSON format was given.Only return the changed blocks, 
          The response format is JSON with fields below: {
         message: "The message of model, describe the result",
-        data: The modified data with the same fields as the input
+        data: List of modified or new block, The modified data with the same fields as the input ( with 'benefits' block, you must return ogirin data but exlcude not changed plan, only keep modified plan). Keep the same fields as the input, only modify the fields that you need to modify. Keep the id field as it is.
         }
          The user input is below:`
       },
@@ -272,6 +272,13 @@ export class AiAgentService {
     const response = [...pageContent, benefits];
     response.forEach((block: any) => {
       block.id = v7();
+      if(block.type == "benefits"){
+        block.data.sections.forEach((section: any) => {
+          section.plans.forEach((plan: any) => {
+            plan.id = v7();
+          })
+        })
+      }
     });
     return response;
   }
