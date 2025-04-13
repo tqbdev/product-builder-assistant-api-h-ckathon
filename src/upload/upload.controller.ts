@@ -23,7 +23,6 @@ export class UploadController {
   async uploadMultipleFiles(@UploadedFiles() files: Express.Multer.File[]) {
     try {
       const result = await this.uploadService.parseFiles(files);
-
       return {
         message: "Success",
         data: result,

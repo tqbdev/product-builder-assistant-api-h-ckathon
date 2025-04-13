@@ -73,13 +73,15 @@ export class AiAgentService {
     return jsonObject;
   }
 
-  async processFileExcel(file: Express.Multer.File): Promise<any> {
+  async processFileExcel(file: Express.Multer.File | undefined): Promise<any> {
+    if(!file) return null;
     const content = await this.convertExcelToJson(file);
     const response = await this.askAiAgentGetLogic(JSON.stringify(content));
     const jsonObject = this.parseGeminiJSON(response);
     return jsonObject;
   }
-  async parseToNotionBlocks(file: Express.Multer.File): Promise<InvoiceData[]> {
+  async processFilePDF(file: Express.Multer.File|undefined): Promise<InvoiceData[]> {
+    if(!file) return [];
     const pdfBase64 = await this.pdfToBase64(file);
     return await this.askAiAgentToParseNotionBlocks(pdfBase64);
   }
