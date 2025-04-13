@@ -5,8 +5,8 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: 'https://web.myassistant.vn',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin: '*',
+    methods: '*',
     credentials: false,  // Changed to false when using '*' origin
     allowedHeaders: '*',
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
