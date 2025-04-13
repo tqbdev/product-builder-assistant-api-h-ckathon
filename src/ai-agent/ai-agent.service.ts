@@ -42,6 +42,19 @@ export class AiAgentService {
         message: "The message of model, describe the result",
         data: List of modified or new block, The modified data with the same fields as the input ( with 'benefits' block, you must return ogirin data but exlcude not changed plan, only keep modified plan). Keep the same fields as the input, only modify the fields that you need to modify. Keep the id field as it is.
         }
+
+        Example response :
+        [
+        {
+            "type": "heading",
+            "data": "Highlight of policy",
+            "config": {
+                "icon": "Heart",
+                "className": "text-blue-600 font-bold text-2xl text-left mt-8 ml-4"
+            },
+            "id": "01962e0b-5b49-74d9-a921-dae661030e3f"
+        }
+    ]
          The user input is below:`,
       },
       {
